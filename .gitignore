@@ -34,9 +34,15 @@ data/images/*
 !data/images/zidane.jpg
 !data/images/bus.jpg
 !data/*.sh
+<<<<<<< HEAD
 !data/images/book_spine_sample.jpg
 !data/images/Good-Book-Spines.jpg
 !data/images/single_book.jpg
+=======
+!data/images/canada.jpg
+!data/images/popular.jpg
+!data/images/technical.jpg
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 !segmentation/images
 !segmentation/images/IMG_1770.jpg
 !segmentation/images/IMG_1778_0.jpg
@@ -47,6 +53,13 @@ data/images/*
 
 results*.csv
 
+<<<<<<< HEAD
+=======
+src/spinereader/artifacts/
+data/asin2emb
+data/books_emb_8_tidy.csv
+
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 # Datasets -------------------------------------------------------------------------------------------------------------
 coco/
 coco128/

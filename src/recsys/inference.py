@@ -2,6 +2,7 @@ import gzip
 import pickle
 from typing import List, Dict, OrderedDict, Tuple
 
+<<<<<<< HEAD
 import numpy as np
 
 
@@ -17,6 +18,16 @@ def title_to_asin(title: str) -> str:
     """
     return "<UNKNOWN>"
 
+=======
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+
+REC_EMBEDDING_DIRNAME = Path(__file__).resolve().parent.parent.parent / "data"
+REC_EMBEDDING_FILE = "asin2emb"
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
 def cosine_similarity(a: List[float], b: List[float]) -> float:
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
@@ -24,7 +35,13 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
 
 class BookEmbedding:
 
+<<<<<<< HEAD
     def __init__(self, emb_path):
+=======
+    def __init__(self, emb_path=None):
+        if emb_path is None:
+            emb_path = REC_EMBEDDING_DIRNAME / REC_EMBEDDING_FILE
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
         with gzip.open(emb_path, 'rb') as f:
             self.asin2emb = pickle.load(f)
 
@@ -75,6 +92,7 @@ class BookEmbedding:
         Returns:
 
         """
+<<<<<<< HEAD
         out = {}
         for unseen in candidates:
             scores = self._get_scores(unseen, saved)
@@ -85,3 +103,20 @@ class BookEmbedding:
 
         return sorted(list(out.items()), key=lambda x: -x[1][by])
 
+=======
+        candidate_dict = {}
+        for unseen in candidates:
+            scores = self._get_scores(unseen, saved)
+            # candidate_dict[unseen] = {'max': max(scores),
+            #                'most_similar_in_saved': saved[scores.index(max(scores))],
+            #                'avg': sum(scores) / len(scores),
+            #                'raw': scores}
+            candidate_dict[unseen] = max(scores)
+      
+       
+        data = [(cand, candidate_dict[cand]) for cand in candidates]
+        res = pd.DataFrame.from_records(data, columns=['asin', 'score'])
+        print(res)
+        # return [k for k, v in sorted(candidate_dict.items(), key=lambda item:item[1])]
+        return res
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984

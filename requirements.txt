@@ -15,7 +15,14 @@ pytorch-lightning==1.7.1
 torchmetrics==0.9.3
 tqdm>=4.64.0
 transformers==4.22.2
+<<<<<<< HEAD
 
+=======
+sentence_transformers==2.2.2
+scikit-learn==1.1.2
+
+
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 # Hydra ---------------------------------------
 hydra-core==1.2.0
 hydra-colorlog==1.2.0
@@ -31,7 +38,11 @@ pandas>=1.1.4
 seaborn>=0.11.0
 
 # Gradio --------------------------------------
+<<<<<<< HEAD
 gradio>=3.3.1
+=======
+gradio>=3.4.1
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
 # Export --------------------------------------
 # coremltools>=5.2  # CoreML export

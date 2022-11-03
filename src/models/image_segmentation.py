@@ -5,20 +5,52 @@ https://github.com/LakshyaKhatri/Bookshelf-Reader-API
 """
 
 import math
+<<<<<<< HEAD
+=======
+import os
+from pathlib import Path
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
 import cv2
 import numpy as np
 from PIL import Image
 
+<<<<<<< HEAD
 
 def crop_book_spines_in_image(pil_img, output_img_type: str = "pil"):
+=======
+CROPPED_IMAGES_DIRNAME = (
+    Path(__file__).resolve().parent.parent.parent / "cropped_images"
+)
+
+
+def crop_book_spines_in_image(
+    pil_img, output_img_type: str = "pil", save_images: bool = False
+):
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
     """
     Identifies the book spines in the input image
     and returns list of such book spine images.
     """
     cv2_img = pil_image_to_opencv_image(pil_img)
+<<<<<<< HEAD
     points = detect_spines(cv2_img)
     return get_cropped_images(cv2_img, points, output_img_type=output_img_type)
+=======
+    # resizing images to control cropping behavior
+    cv2_img = resize_img(cv2_img)
+    points = detect_spines(cv2_img)
+    cropped_images = get_cropped_images(
+        cv2_img, points, output_img_type=output_img_type
+    )
+    if save_images == True:
+        Path(CROPPED_IMAGES_DIRNAME).mkdir(parents=True, exist_ok=True)
+        for i, img in enumerate(cropped_images):
+            image_to_save_path = f"{CROPPED_IMAGES_DIRNAME}\image_{i}.png"
+            cv2.imwrite(image_to_save_path, pil_image_to_opencv_image(img))
+
+    return cropped_images
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
 
 def detect_spines(img):
@@ -50,6 +82,7 @@ def detect_spines(img):
     lines = cv2.HoughLines(img_erosion, 1, np.pi / 180, 100)
     if lines is None:
         return []
+<<<<<<< HEAD
     points = get_points_in_x_and_y(lines, height)
     points.sort(key=lambda val: val[0][0])
     non_duplicate_points = remove_duplicate_lines(points)
@@ -57,6 +90,20 @@ def detect_spines(img):
     final_points = shorten_line(non_duplicate_points, height)
 
     return final_points
+=======
+
+    points = get_points_in_x_and_y(lines, width, height)
+
+    points = remove_diagonals(points)
+
+    points = shorten_line(points, height)
+
+    points.sort(key=lambda val: val[0][0])
+
+    points = remove_duplicate_lines(points)
+
+    return points
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
 
 def get_cropped_images(image, points, output_img_type: str = "pil"):
@@ -94,6 +141,14 @@ def get_cropped_images(image, points, output_img_type: str = "pil"):
 
         # do bit-op
         dst = cv2.bitwise_and(cropped, cropped, mask=mask)
+<<<<<<< HEAD
+=======
+        # rotations
+        dst = cv2.rotate(dst, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # dst = cv2.rotate(dst, cv2.ROTATE_90_CLOCKWISE)
+        # dst = cv2.rotate(dst, cv2.ROTATE_180)
+
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
         if output_img_type == "pil":
             dst = opencv_image_to_pil_image(dst)
         cropped_images.append(dst)
@@ -101,10 +156,17 @@ def get_cropped_images(image, points, output_img_type: str = "pil"):
         last_x1 = x1
         last_x2 = x2
 
+<<<<<<< HEAD
     return cropped_images
 
 
 def get_points_in_x_and_y(hough_lines, max_y):
+=======
+    return cropped_images[1:]
+
+
+def get_points_in_x_and_y(hough_lines, max_x, max_y):
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
     """
     Takes a list of trigonometric form of lines
     and returns their starting and ending
@@ -128,7 +190,11 @@ def get_points_in_x_and_y(hough_lines, max_y):
         points.append((start, end))
 
     # Add a line at the very end of the image
+<<<<<<< HEAD
     points.append(((500, max_y), (500, 0)))
+=======
+    points.append(((max_x, max_y), (max_x, 0)))
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
     return points
 
@@ -140,6 +206,7 @@ def remove_duplicate_lines(sorted_points):
     a list of non duplicated line coordinates
     """
     last_x1 = 0
+<<<<<<< HEAD
     non_duplicate_points = []
     for point in sorted_points:
         ((x1, y1), _) = point
@@ -150,10 +217,48 @@ def remove_duplicate_lines(sorted_points):
         elif abs(last_x1 - x1) >= 25:
             non_duplicate_points.append(point)
             last_x1 = x1
+=======
+    last_x2 = 0
+    non_duplicate_points = []
+    for point in sorted_points:
+        ((x1, y1), (x2, y2)) = point
+        if last_x1 == 0 and x1 > 0:
+            non_duplicate_points.append(point)
+            last_x1 = x1
+
+        # Ignore lines that start too close to previous line
+        # and lines that intersect with previous line
+        elif abs(last_x1 - x1) >= 25 and x2 > last_x2:
+            non_duplicate_points.append(point)
+            last_x1 = x1
+            last_x2 = x2
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 
     return non_duplicate_points
 
 
+<<<<<<< HEAD
+=======
+def remove_diagonals(points):
+    """
+    Filters for the lines that are at an angle
+    superior to approx. 70 degrees and returns
+    a list containing line coordinates
+    """
+    non_diagonals = []
+    for point in points:
+        ((x1, y1), (x2, y2)) = point
+        if x1 == x2:
+            non_diagonals.append(point)
+        # slope > tan(70)
+        # tan(70) is approx. 2.7
+        elif abs((y2 - y1) / (x2 - x1)) > 2.7:
+            non_diagonals.append(point)
+
+    return non_diagonals
+
+
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 def shorten_line(points, y_max):
     """
     Takes a list of starting and ending
@@ -191,6 +296,33 @@ def shorten_line(points, y_max):
     return shortened_points
 
 
+<<<<<<< HEAD
+=======
+def resize_img(img):
+    """
+    Resizes image to a max width or height of 1000px
+    """
+    img = img.copy()
+    img_ht, img_wd, _ = img.shape
+
+    max_lenght = 1000
+
+    if img_wd >= img_ht:
+        ratio = img_wd / img_ht
+        new_width = 1000
+        new_height = math.ceil(new_width / ratio)
+
+    elif img_wd < img_ht:
+        ratio = img_ht / img_wd
+        new_height = 1000
+        new_width = math.ceil(new_height / ratio)
+
+    resized_image = cv2.resize(img, (new_width, new_height))
+
+    return resized_image
+
+
+>>>>>>> 921d38fb755d016aaf25db6d05c207e8bb0d8984
 def pil_image_to_opencv_image(pil_image):
     """
     Converts image from PIL Image to Opencv Image
